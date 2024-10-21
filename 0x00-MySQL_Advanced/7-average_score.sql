@@ -1,8 +1,12 @@
--- Creates a stored procedure that calculates the average score of a student
--- Creates a stored procedure that calculates the average score of a student
-DELIMITER $$ ;
-CREATE PROCEDURE ComputeAverageScoreForUser(user_id int)
+-- create a stored procedure 'ComputeAverageScoreForUser' to compute and store average score for a student
+DROP PROCEDURE IF EXISTS ComputeAverageScoreForUser;
+DELIMITER $$
+CREATE PROCEDURE ComputeAverageScoreForUser(IN user_id INT)
 BEGIN
- SELECT id, name, AVG(corrections.score) AS average_score from users LEFT JOIN corrections ON corrections.user_id=users.id GROUP BY users.id;
-END $$
-DELIMITER ; $$
+DECLARE avg_score FLOAT;
+SELECT AVG(score) INTO avg_score FROM corrections c WHERE c.user_id=user_id;
+UPDATE users
+       SET average_Score = avg_score
+       WHERE id=user_id;
+END;
+$$
